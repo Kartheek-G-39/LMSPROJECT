@@ -18,7 +18,7 @@
         <a class="navbar-brand" href="#"><img src="/frontend/static/img/VVIT_logo.svg" alt="logo" class="logo w-25"/></a>
     </div>
     <ul class="nav-links">
-       <li><a href="">Log Out</a></li>
+       <li><a href="logout">Log Out</a></li>
     </ul>
     <div class="burger">
         <div class="line1"></div>
@@ -40,7 +40,7 @@
                         <h3 id="stuName">Name</h3>
                     </div>
                     <div class="card-body">
-                        <strong class="pr-1">Student ID:</strong> <p class="mb-0"  id="sName" >321000001</p>
+                        <strong class="pr-1">Student ID:</strong> <p class="mb-0"  id="sName" >{{email}}</p>
                        <strong class="pr-1" >Branch: </strong> <p class="mb-0" id="sClass" >csm</p>
                         <strong class="pr-1" >Section: </strong> <p class="mb-0" id="sSection" >A</p>
                     </div>
@@ -120,7 +120,7 @@
 
                     </div>
                     <div class="d-flex flex-row justify-content-center mb-4">
-                    <button class="btn btn-primary" onclick="saveButton()">Save</button>
+                    <button class="btn btn-primary"<a href="save" onclick="saveButton()">Save</button>
                     </div>
 
                 </div>

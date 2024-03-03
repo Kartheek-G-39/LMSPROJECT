@@ -17,7 +17,7 @@
     </div>
     <ul class="nav-links">
         <li><a href="home">Home</a></li>
-        <li><a href="login">Login</a></li>
+        <li><a href="signup">SignUP</a></li>
         <li><a href="aboutus">About US</a></li>
     </ul>
     <div class="burger">
@@ -38,62 +38,30 @@
 
        <img src="/frontend/static/img/id-cards.svg" alt="reload" class="image_card mt-2 ">
             <div class="texts d-flex flex-column justify-content-center"  >
-                <div class="form-floating mb-3 ">
-                    <input type="email" class="form-control input_class" id="floatingInput" placeholder="name@vvit.net">
-                    <label for="floatingInput">Email address</label>
-                </div>
-                <div class="form-floating">
-                    <input type="password" class="form-control input_class" id="floatingPassword" placeholder="Password">
-                    <label for="floatingPassword">Password</label>
-                </div>
-
-                <button type="button" class="btn mt-3" data-mdb-ripple-init> <a href="dashboard">Login</a></button>
-
-                <div class="styles mt-3">
-                <ul>
-                    <li><a href="forgot_password"> Forgot Password </a> </li>
-                    <li><a href="forgot_id">Forgot Id</a></li>
-                </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <!---another form-->
-        <div class="row mt-3 ">
-        <div class="d-block d-sm-block d-md-none pt-3 w-75 col-6 col-md-6 col-sm-6 h-auto w-auto w-25 mobile_view mr-5">
-            <div class="card  pl-5 shadow-lg h-auto ">
-
-                <img src="/frontend/static/img/id-cards.svg" alt="reload" class="image_card mt-2 ">
-                <div class="texts d-flex flex-column justify-content-center"  >
+                <form action ="" method = "post">
+                {% csrf_token %}
                     <div class="form-floating mb-3 ">
-                        <input type="email" class="form-control input_class" id="floatingInput1" placeholder="name@vvit.net">
+                        <input type="email" class="form-control input_class" id="floatingInput" name="mail" placeholder="name@vvit.net" required>
                         <label for="floatingInput">Email address</label>
                     </div>
                     <div class="form-floating">
-                        <input type="password" class="form-control input_class" id="floatingPassword2" placeholder="Password">
+                        <input type="password" class="form-control input_class" id="floatingPassword" name="pass" placeholder="Password" required>
                         <label for="floatingPassword">Password</label>
                     </div>
 
-                    <button type="button" class="btn mt-3" data-mdb-ripple-init><a href="dashboard">Login</a></button>
+                    <button type="submit" class="btn mt-3" data-mdb-ripple-init> Login</button>
 
                     <div class="styles mt-3">
-                        <ul>
-                            <li><a href="forgot_password"> Forgot Password </a> </li>
-                            <li><a href="forgot_id">Forgot Id</a></li>
-                        </ul>
+                    <ul>
+                        <li><a href="forgot"> Forgot Password </a> </li>
+                    </ul>
                     </div>
-                </div>
+                </form>
             </div>
-
         </div>
     </div>
-    </div>
 
-    </div>
-</div>
-
-
+       
 <script>
     function navSlide() {
         const burger = document.querySelector(".burger");

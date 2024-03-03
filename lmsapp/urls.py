@@ -5,11 +5,15 @@ from . import views
 urlpatterns = [
     path('home',views.home),
     path('',views.home),
+    path('accounts/login/',views.login),
     path('login',views.login),
     path('signup',views.signup),
+    path('logout',views.logout_user),
+    path('aftersignup/',views.aftersignup),
+    path('register',views.register),
     path('aboutus',views.aboutus),
-    path('dashboard',views.dashboard),
-    #path('forgot_password',views.forgotpass),
-    #path('forgot_id',views.forgotid),
+    path('verify',views.verify),
+    path('forgot',views.forgot),
+    path('clear',views.clear),
     
 ]

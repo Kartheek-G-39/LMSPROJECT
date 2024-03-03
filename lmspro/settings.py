@@ -41,13 +41,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'lmsapp.middleware.logout_when_refresh',
 ]
 
 ROOT_URLCONF = 'lmspro.urls'
@@ -75,11 +76,15 @@ WSGI_APPLICATION = 'lmspro.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'default': {
+           'ENGINE': 'djongo',
+           'NAME': 'library',
+           'CLIENT':{
+               'host':'mongodb://localhost:27017',
+           }
     }
 }
+AUTH_USER_MODEL = 'lmsapp.User'
 
 
 # Password validation
