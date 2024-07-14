@@ -1,0 +1,44 @@
+/* signup.css */
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ffffff; /* White background */
+}
+#signupForm {
+    max-width: 400px; /* Adjust max-width as per your design */
+    width: 100%;
+    background-color: #ffffff; /* Background color for the form */
+    border-radius: 8px; /* Rounded corners for the form */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle effect */
+    padding: 20px; /* Padding for content inside the form */
+}
+
+.signup-image {
+    text-align: center;
+    margin-bottom: 20px; /* Adjust spacing between image and form */
+}
+
+.signup-image img {
+    max-width: 100%; /* Ensure image stays within container */
+}
+
+.id-cards-image {
+    width: 100px; /* Adjust image width as per your design */
+    display: block;
+    margin: 0 auto 20px; /* Center image horizontally and add bottom margin */
+}
+
+.form-group {
+    margin-bottom: 20px; /* Adjust spacing between form groups */
+}
+
+
+@media (max-width: 767px) {
+    /* Adjust for smaller screens */
+    .signup-image {
+        display: none; /* Hide the image on smaller screens */
+    }
+}

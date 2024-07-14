@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/VVIT_logo.svg' %}">
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+
+    <title>{% block title %}VVIT LMS{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="brand-title"><a class="navbar-brand" href="/"><img src="{% static 'img/VVIT_logo.svg' %}" alt="logo" class="logo w-25"/><p>VVIT LMS</p></a></div>
+            <a href="javascript:void(0);" class="burger">&#9776;</a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    {% if not request.user.is_authenticated %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                    {% else %}
+                    <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'aboutus' %}">About Us</a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 VVIT LMS</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // JavaScript (inline or in a separate file)
+
+        function navSlide() {
+            const burger = document.querySelector(".burger");
+            const nav = document.querySelector(".nav-links");
+            const navLinks = document.querySelectorAll(".nav-links ul li");
+
+            burger.addEventListener("click", () => {
+                // Toggle nav-active class on the nav-links div
+                nav.classList.toggle("active");
+
+                // Animate links individually
+                navLinks.forEach((link, index) => {
+                    if (link.style.animation) {
+                        link.style.animation = "";
+                    } else {
+                        link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.5}s`;
+                    }
+                });
+
+                // Toggle the 'toggle' class on burger to animate the icon
+                burger.classList.toggle("toggle");
+            });
+        }
+
+        navSlide();
+    </script>
+</body>
+</html>

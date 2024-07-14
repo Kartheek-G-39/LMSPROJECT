@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Set to False if you want sessions to persist after closing the browser
+SESSION_COOKIE_AGE = 3600  
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'lmsapp.middleware.logout_when_refresh',
+    # 'lmsapp.middleware.logout_when_refresh',
 ]
 
 ROOT_URLCONF = 'lmspro.urls'
@@ -56,7 +58,7 @@ ROOT_URLCONF = 'lmspro.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'frontend/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,15 +77,23 @@ WSGI_APPLICATION = 'lmspro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#         'default': {
+#            'ENGINE': 'djongo',
+#            'NAME': 'library',
+#            'CLIENT':{
+#                'host':'mongodb://localhost:27017',
+#            }
+#     }
+# }
+
 DATABASES = {
-        'default': {
-           'ENGINE': 'djongo',
-           'NAME': 'library',
-           'CLIENT':{
-               'host':'mongodb://localhost:27017',
-           }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 AUTH_USER_MODEL = 'lmsapp.User'
 
 
@@ -121,8 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIR = [os.path.join(BASE_DIR,'static')]
+STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

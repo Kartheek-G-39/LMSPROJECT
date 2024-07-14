@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Branch Students
+{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/branch_students.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <form method="GET" style="display: flex;" action="{% url 'branch_students' branch %}">
+        <input type="search" name="q" id="q" placeholder="Search for students..." class="search-input">
+        <button type="submit" class="btn btn-primary search-icon"><i class="bi bi-search"></i></button>
+        <a href="{% url 'branch_students' branch %}" class="btn btn-secondary ml-2">Clear</a>
+    </form>
+</div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Students in {{ branch }}</h2>
+            <div class="d-flex justify-content-end mb-3">
+                <label for="academicYearFilter" class="me-2">Filter by Academic Year:</label>
+                <select id="academicYearFilter" class="form-select" onchange="filterStudents(this.value)">
+                    <option value="">All</option>
+                    {% for academic_year in academic_years %}
+                        <option value="{{ academic_year }}">{{ academic_year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Library Id</th>
+                            <th>Section</th>
+                            <th>Academic Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr onclick="location.href='{% url 'student_details' student.id %}'" style="cursor: pointer;">
+                            <td>{{ student.rollnumber }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.section }}</td>
+                            <td>{{ student.academic_year }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function filterStudents(academicYear) {
+        // Get all rows in the table body
+        const rows = document.querySelectorAll('.table-scroll tbody tr');
+        
+        rows.forEach(row => {
+            // Show all rows if academicYear is empty (All selected)
+            if (!academicYear) {
+                row.style.display = '';
+                return;
+            }
+            
+            // Get the academic year from the corresponding cell
+            const rowAcademicYear = row.querySelector('td:last-child').textContent.trim();
+            
+            // Show or hide rows based on the selected academicYear
+            if (rowAcademicYear === academicYear) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

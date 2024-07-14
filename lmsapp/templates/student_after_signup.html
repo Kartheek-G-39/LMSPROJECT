@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" action="{% url 'save_student_details' %}" autocomplete="off">
+    {% csrf_token %}
+    
+    <div class="student-profile ">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mt-2">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-transparent border-0">
+                            <h3 class="mb-0">General Information</h3>
+                        </div>
+        
+                        <div class="card-body pt-0">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Name</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <input type="text" name="name" placeholder="Please Enter Your Name" required>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <td>:</td>
+                                    <td>
+                                        <textarea name="rollnum" id="rollnum">{{ roll_no }}</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Academic Year</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <input type="number">
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Gender</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <div class="gendercontainer">
+                                                <input type="radio" name="radio" id="opt1" value="male" required>
+                                                <label for="opt1" class="label1">
+                                                    <span>Male</span>
+                                                </label>
+                                                <input type="radio" name="radio" id="opt2" value="female">
+                                                <label for="opt2" class="label2">
+                                                    <span>Female</span>
+                                                </label>
+                                            </div>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Student Branch</th>
+                                    <td>:</td>
+                                    <td>{{ branch }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Student Section</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <input type="text" name="section" id="nameDisplay" placeholder="Enter your section">
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <input name="libraryid" id="studentId">{{ libraryid }}</input>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Remarks</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <textarea name="opinion" placeholder="Mention your Remarks"></textarea>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Issues</th>
+                                    <td>:</td>
+                                    <td>
+                                        <label>
+                                            <textarea name="opinion" placeholder="Mention your Issues"></textarea>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+    
+                        <div class="d-flex flex-row justify-content-center mb-4">
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

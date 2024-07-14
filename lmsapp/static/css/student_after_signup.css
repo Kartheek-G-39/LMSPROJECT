@@ -1,0 +1,70 @@
+/* CSS for user_profile.html */
+
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Student Profile */
+.student-profile .container {
+    padding: 20px 0;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.card-header {
+    background-color: #f8f9fa; /* Light background */
+    font-size: 1.5rem;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.gendercontainer {
+    display: flex;
+    align-items: center;
+}
+
+.gendercontainer input[type="radio"] {
+    display: none;
+}
+
+.gendercontainer label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.gendercontainer label span {
+    margin-left: 5px;
+}
+
+.btn-primary {
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}

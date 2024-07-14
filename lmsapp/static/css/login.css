@@ -1,0 +1,50 @@
+/* login.css */
+
+.login-user-img {
+    max-width: 100%;
+    height: auto;
+}
+
+.login-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form .form-group {
+    margin-bottom: 15px;
+}
+
+.login-form .btn-block {
+    margin-top: 20px;
+}
+
+.login-form a {
+    color: #007bff;
+}
+.id-cards-image {
+    width: 100px; /* Adjust image width as per your design */
+    display: block;
+    margin: 0 auto 20px; /* Center image horizontally and add bottom margin */
+}
+
+
+.login-form a:hover {
+    text-decoration: none;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ffffff; /* White background */
+}
+
+@media (max-width: 767px) {
+    /* Adjust for smaller screens */
+    .login-user-img {
+        display: none; /* Hide the image on smaller screens */
+    }
+}

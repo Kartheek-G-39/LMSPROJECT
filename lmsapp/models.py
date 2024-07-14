@@ -24,9 +24,31 @@ class users(UserManager):
         extrafields.setdefault("is_staff",True)
         extrafields.setdefault("is_superuser",True)
         return self._create_user(email,password,**extrafields)
-    
+class BooleanCharField(models.CharField):
+    def __init__(self, *args, **kwargs):
+        super(BooleanCharField, self).__init__(*args, **kwargs)
+
+    def from_db_value(self, value, expression, connection):
+        if value == 'y':
+            return True
+        elif value == 'n':
+            return False
+        return None
+
+    def to_python(self, value):
+        if value == 'y':
+            return True
+        elif value == 'n':
+            return False
+        return None
+
+    def get_prep_value(self, value):
+        if value:
+            return 'y'
+        return 'n'
+
 class User(AbstractBaseUser,PermissionsMixin):
-    email=models.EmailField(primary_key=True,blank=True,default='',unique=True)
+    email=models.EmailField(primary_key=True)
 
     is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
@@ -46,15 +68,73 @@ class User(AbstractBaseUser,PermissionsMixin):
         verbose_name = 'user'
         verbose_name_plural = 'users'
 
-class userdata(models.Model):
-    usermail = models.ForeignKey(User, verbose_name=_("User Infromation"), on_delete=models.CASCADE)
+
+class Userdata(models.Model):
+    usermail = models.OneToOneField(User, verbose_name=_("User Information"), on_delete=models.CASCADE, related_name="userdata")
     GENDER_CHOICES = (
-        ('M', 'Homme'),
-        ('F', 'Femme'),
+        ('M', '👨'),
+        ('F', '👧'),
     )
     name = models.CharField(_("Name"), max_length=50)
-    rollnumber =models.CharField(_("RollNo."), max_length=10,unique=True)
-    gender = models.CharField(_("Gender"), max_length=1,choices=GENDER_CHOICES)
+    rollnumber = models.CharField(_("RollNo."), max_length=10, unique=True)
+    gender = models.CharField(_("Gender"), max_length=1, choices=GENDER_CHOICES)
     branch = models.CharField(_("Branch"), max_length=10)
     section = models.CharField(_("Section"), max_length=50)
     libraryid = models.CharField(_("Library ID"), max_length=50)
+    academic_year = models.CharField(_("Academic Year"), max_length=9, blank=True,null=True)  # Example: 2021-2025
+
+    def save(self, *args, **kwargs):
+        # Auto-fill academic year based on roll number
+        if self.rollnumber:
+            joining_year = self.rollnumber[:2]  # Assuming first two characters represent joining year
+            self.academic_year = f"20{joining_year}-{int(joining_year) + 4}" 
+        
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+class Book(models.Model):
+    AccessionNumber = models.CharField(max_length = 100,primary_key = True)
+    TitleId = models.CharField(max_length=10,null = True)
+    TitleName = models.CharField(max_length=250,null = True)
+    AllowLend = models.BooleanField(max_length=1,default=True)
+    AuthorName = models.CharField(max_length=100,blank = True,null = True)
+    AuthorId = models.CharField(max_length=10,blank = True,null = True)
+    SupplierName = models.CharField(max_length=100,blank = True,null = True)
+    ClassificaNumber = models.CharField(max_length=20,blank = True,null = True)
+
+    def __str__(self):
+        return self.TitleName
+    class Meta:
+        verbose_name = 'book'
+        verbose_name_plural = 'books'
+class BookLending(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lendinginfo")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="lendinginfo")
+    lending_time = models.DateTimeField(default=timezone.now)
+    return_time = models.DateTimeField(null=True, blank=True)
+    expected_return_date = models.DateTimeField(null=True, blank=True)
+    fine_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    class Meta:
+        unique_together = ('user', 'book', 'lending_time')
+
+    def save(self, *args, **kwargs):
+        # Calculate and update expected_return_date if not set
+        self.book.AllowLend=False
+        self.book.save()
+        if not self.expected_return_date:
+            self.expected_return_date = self.lending_time + timezone.timedelta(days=30)  # Assuming 30 days for example
+
+        # Update fine_amount if return_time is set and it's overdue
+        if self.return_time and self.return_time > self.expected_return_date:
+            days_overdue = (self.return_time - self.expected_return_date).days
+            self.fine_amount = days_overdue * 7  # Rs. 7 per day overdue, adjust as necessary
+        else:
+            self.fine_amount = 0  # Reset fine_amount if no overdue
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.user.email} -> {self.book.TitleName}'

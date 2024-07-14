@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Home
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Search bar -->
+    <div class="search-container">
+        <form method="GET" style="display: flex;" action="{% url 'home' %}">
+            <input type="search" name="q" id="q" placeholder="Search books..." class="search-input">
+            <button type="submit" class="btn btn-primary search-icon"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <!-- Branch buttons -->
+    <div class="card d-flex flex-row justify-content-center m-3">
+        <div class="card-body">
+            {% for branch in branches %}
+            <a href="{% url 'branch_students' branch %}">
+                <button class="color1 btn shadow-lg">{{ branch }}</button>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Illustration (optional) -->
+
+    <!-- Display paginated books -->
+    <div class="mt-3" >
+        <div class="table-responsive"> <!-- Wrap table for responsive overflow -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Accession Number</th>
+                        <th>Title Name</th>
+                        <th>Author Name</th>
+                        <th>Supplier Name</th>
+                        <!-- Add more headers as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in page_obj %}
+                    <tr>
+                        <td>{{ book.AccessionNumber }}</td>
+                        <td>{{ book.TitleName }}</td>
+                        <td>{{ book.AuthorName }}</td>
+                        <td>{{ book.SupplierName }}</td>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No books found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination links -->
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-outline-secondary">&laquo; First</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary">Previous</a>
+            {% endif %}
+            <span class="current-page">{{ page_obj.number }}</span>
+            /
+            <span class="total-pages">{{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-secondary">Last &raquo;</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
