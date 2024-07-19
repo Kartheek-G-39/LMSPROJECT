@@ -142,4 +142,4 @@ EMAILJS_USER_ID = 'KNP4f0ozaRaaQsdzD'  # Add your EmailJS user ID here
 EMAILJS_SERVICE_ID = 'service_nnwjrro'  # Add your EmailJS service ID here
 EMAILJS_TEMPLATE_ID = 'template_3b7cmt4'
 
-ALLOWED_HOSTS = ['ec2-54-216-195-206.eu-west-1.compute.amazonaws.com', 'your_domain.com', 'another_domain.com']
+ALLOWED_HOSTS = ['ec2-54-216-195-206.eu-west-1.compute.amazonaws.com', '127.0.0.1', 'another_domain.com']

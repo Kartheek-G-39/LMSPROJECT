@@ -87,11 +87,10 @@ def home(request,**kwargs):
         }
         return render(request, "admin_home.html", context)
     context = {
-        'user':Userdata.objects.filter(usermail=user),
+        'user':Userdata.objects.get(usermail=user),
         'book_stu':BookLending.objects.filter(user=user)
     }
-    for i in context['book_stu']:
-        print(i)
+    user = context['user']
     return render(request,"home.html",context)
 
 def signup(request):
