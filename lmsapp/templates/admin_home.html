@@ -46,7 +46,7 @@ Home
                 </thead>
                 <tbody>
                     {% for book in page_obj %}
-                    <tr>
+                    <tr onclick="location.href='{% url 'book_details' book.pk %}'">
                         <td>{{ book.AccessionNumber }}</td>
                         <td>{{ book.TitleName }}</td>
                         <td>{{ book.AuthorName }}</td>

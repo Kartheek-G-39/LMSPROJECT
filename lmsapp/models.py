@@ -65,8 +65,8 @@ class User(AbstractBaseUser,PermissionsMixin):
     REQUIRED_FIELDS = []
 
     class Meta:
-        verbose_name = 'user'
-        verbose_name_plural = 'users'
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
 
 
 class Userdata(models.Model):
@@ -93,6 +93,9 @@ class Userdata(models.Model):
 
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = 'UserData'
+        verbose_name_plural = 'UsersData'
 
 class Book(models.Model):
     AccessionNumber = models.CharField(max_length = 100,primary_key = True)
@@ -107,8 +110,8 @@ class Book(models.Model):
     def __str__(self):
         return self.TitleName
     class Meta:
-        verbose_name = 'book'
-        verbose_name_plural = 'books'
+        verbose_name = 'Book'
+        verbose_name_plural = 'Books'
 class BookLending(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lendinginfo")
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="lendinginfo")
@@ -119,6 +122,8 @@ class BookLending(models.Model):
 
     class Meta:
         unique_together = ('user', 'book', 'lending_time')
+        verbose_name = 'Book Lending Info'
+        verbose_name_plural = 'Books Lending Info'
 
     def save(self, *args, **kwargs):
         # Calculate and update expected_return_date if not set
@@ -128,12 +133,16 @@ class BookLending(models.Model):
             self.expected_return_date = self.lending_time + timezone.timedelta(days=30)  # Assuming 30 days for example
 
         # Update fine_amount if return_time is set and it's overdue
+        if self.return_time and timezone.is_naive(self.return_time):
+            self.return_time = timezone.make_aware(self.return_time)
         if self.return_time and self.return_time > self.expected_return_date:
-            days_overdue = (self.return_time - self.expected_return_date).days
-            self.fine_amount = days_overdue * 7  # Rs. 7 per day overdue, adjust as necessary
+            delta = self.return_time - self.expected_return_date
+            self.fine_amount = delta.days * 7  # Rs. 7 per day overdue, adjust as necessary
         else:
             self.fine_amount = 0  # Reset fine_amount if no overdue
-
+        if self.return_time:
+            self.book.AllowLend=True
+        self.book.save()
         super().save(*args, **kwargs)
 
     def __str__(self):

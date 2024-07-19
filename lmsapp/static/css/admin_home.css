@@ -144,7 +144,9 @@
 }
 
 .table tbody tr:hover {
-    background-color: #f9f9f9;
+    transform: scale(1.02);
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
 }
 
 /* Styles for pagination */

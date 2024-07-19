@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse,JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import User,Book
@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from django.db.models import Q 
+from django.utils import timezone
 from .forms import BookLendingForm
 
 def login(request):
@@ -226,7 +227,7 @@ def student_details(request,id):
     form = BookLendingForm()
     context = {
         'user':user,
-        'book_stu':BookLending.objects.filter(user=user.usermail),
+        'book_stu':BookLending.objects.filter(user=user.usermail).order_by('-lending_time'),
         'form':form
     }
     return render(request,"home.html",context)
@@ -242,3 +243,87 @@ def book_search(request):
             'text': f"{book.TitleName} - {book.AccessionNumber}"
         })
     return JsonResponse({'results': results})
+
+@login_required
+def book_details(request,id):
+    book = Book.objects.get(pk=id)
+    borrowers = book.lendinginfo.all()
+    context={
+        'book':book,
+        'borrowers' : borrowers
+    }
+
+    return render(request,"book_details.html",context)
+
+
+def update_return_date(request):
+    if request.method == 'POST':
+        book_id = request.POST.get('book_id')
+        print(book_id)
+        return_date = request.POST.get('return_date')
+        if book_id and return_date:
+            book_lending = get_object_or_404(BookLending, pk=book_id)
+            book_lending.return_time = timezone.datetime.strptime(return_date, '%Y-%m-%d')
+            book_lending.save()
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
+
+@csrf_exempt
+def reset_verify_email(request):
+    if request.method == "POST":
+        mail = request.POST.get("mail")
+        user_exists = User.objects.filter(email=mail).exists()
+        return JsonResponse({"message": "exists" if user_exists else "not_exists"})
+
+@csrf_exempt
+def reset_clear_otp(request):
+    if request.method == "POST":
+        mail = request.POST.get("mail")
+        # Clear OTP or perform necessary actions
+        return JsonResponse({"status": "success"})
+
+def reset_password(request):
+    if request.method == "POST":
+        mail = request.POST.get("mail")
+        new_password = request.POST.get("password")
+        try:
+            user = User.objects.get(email=mail)
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)
+            return redirect('password_reset_done')
+        except User.DoesNotExist:
+            return redirect('reset_password')
+    return render(request, 'reset_password.html')
+
+def password_reset_done(request):
+    return render(request, 'password_reset_done.html')
+
+
+@csrf_exempt
+def verify_email(request):
+    if request.method == "POST":
+        mail = request.POST.get("mail")
+        # Perform your check to see if the email exists in the database
+        user_exists = False  # Replace with actual check
+        return JsonResponse({"message": "exists" if user_exists else "does_not_exist"})
+
+@csrf_exempt
+def clear_otp(request):
+    if request.method == "POST":
+        mail = request.POST.get("mail")
+        # Clear OTP or perform necessary actions
+        return JsonResponse({"status": "success"})
+
+def forgot_password(request):
+    if request.method == "POST":
+        # Handle form submission if needed
+        return redirect('password_reset_done')
+    return render(request, 'forgot_password.html')
+
+def password_reset_done(request):
+    return render(request, 'password_reset_done.html')

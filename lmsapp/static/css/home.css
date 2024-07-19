@@ -67,7 +67,7 @@ body {
 }
 
 .general-info table th {
-    width: 25%;
+    width: 30%;
     background-color: #f2f2f2;
 }
 
@@ -79,6 +79,9 @@ body {
     border-radius: 5px;
 }
 
+.mark-sybmitted-button{
+    z-index: 1;
+}
 /* Book Details styles */
 .card1 {
     margin-top: 2rem;
@@ -104,6 +107,13 @@ body {
 .table1 th {
     background-color: #f2f2f2;
 }
+
+.table1 tbody tr:hover {
+    transform: scale(1.01);
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
 
 @media screen and (max-width: 768px) {
     .student-profile .card-header,

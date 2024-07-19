@@ -136,3 +136,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAILJS_USER_ID = 'KNP4f0ozaRaaQsdzD'  # Add your EmailJS user ID here
+EMAILJS_SERVICE_ID = 'service_nnwjrro'  # Add your EmailJS service ID here
+EMAILJS_TEMPLATE_ID = 'template_3b7cmt4'

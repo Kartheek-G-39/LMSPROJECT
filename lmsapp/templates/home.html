@@ -5,6 +5,14 @@
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 {% block content %}
+<script>
+    function handleRowClick(event, bookId) {
+        // Check if the click was outside the button
+        if (!event.target.classList.contains('mark-submitted-button')) {
+            window.location.href = '/book_details/' + bookId + '/'; ;
+        }
+    }
+</script>
 <!-- Page after login for admin or superuser -->
 <!-- Student Profile -->
 <div class="student-profile">
@@ -36,29 +44,25 @@
                     <div class="card-body pt-0">
                         <table class="table table-bordered">
                             <tr>
-                                <th>Student ID</th>
-                                <td>:</td>
+                                <th>Student     :</th>
                                 <td><label>
                                     <input type="text" id="studentId" value="{{ user.id }}" {% if user.id %} disabled {% endif %}>
                                 </label></td>
                             </tr>
                             <tr>
-                                <th>Student Branch</th>
-                                <td>:</td>
+                                <th>Student Branch :</th>
                                 <td><label>
                                     <input type="text" id="newBranch" value="{{ user.branch }}" {% if user.branch %} disabled {% endif %}>
                                 </label></td>
                             </tr>
                             <tr>
-                                <th>Student Section</th>
-                                <td>:</td>
+                                <th>Student Section :</th>
                                 <td><label>
                                     <input type="text" id="nameDisplay" value="{{ user.section }}" {% if user.section %} disabled {% endif %}>
                                 </label></td>
                             </tr>
                             <tr>
-                                <th>Academic Year</th>
-                                <td>:</td>
+                                <th>Academic Year   :</th>
                                 <td><label>
                                     <input type="text" value="{{ user.academic_year }}" disabled >
                                 </label></td>
@@ -95,14 +99,16 @@
     </div>
     <div class="table-responsive">
         <table class="table1">
-            <tr>
-                <th>Book Name</th>
-                <th>Book ID</th>
-                <th>Issue Date</th>
-                <th>Expected Return Date</th>
-                <th>Actual Return Date</th>
-                <th>Fine Amount</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Book ID</th>
+                    <th>Issue Date</th>
+                    <th>Expected Return Date</th>
+                    <th>Actual Return Date</th>
+                    <th>Fine Amount</th>
+                </tr>
+            </thead>
             {% if not book_stu %}
             <tr>
                 <td colspan="6" class="text-center">
@@ -110,16 +116,27 @@
                 </td>
             </tr>
             {% endif %}
-            {% for book in book_stu %}
-            <tr>
-                <td>{{ book.book.TitleName }}</td>
-                <td>{{ book.book.AccessionNumber }}</td>
-                <td>{{ book.lending_time|date:"d-m-Y" }}</td>
-                <td>{{ book.expected_return_date|date:"d-m-Y" }}</td>
-                <td>{{ book.return_time|default:"Not Returned" }} {% if not book.return_time %} <button class="btn btn-primary">Submitted</button>{% endif %}</td>
-                <td>{{ book|calculate_fine }}</td>
-            </tr>
-            {% endfor %}
+            <tbody>
+                {% for book in book_stu %}
+                <tr class="book-row" {% if request.user.is_superuser %} onclick="handleRowClick(event, '{{ book.pk }}')" {% endif %}>
+                    <td>{{ book.book.TitleName }}</td>
+                    <td>{{ book.book.AccessionNumber }}</td>
+                    <td>{{ book.lending_time|date:"d-m-Y" }}</td>
+                    <td>{{ book.expected_return_date|date:"d-m-Y" }}</td>
+                    <td>
+                        {% if book.return_time %}
+                            {{ book.return_time|date:"d-m-Y" }}
+                        {% else %}
+                            Not Returned
+                        {% endif %}
+                        {% if not book.return_time %} 
+                        <button class="btn-secondary mark-submitted-button" data-toggle="modal" data-target="#submitBookModal" data-book-id="{{ book.id }}" data-lending-time="{{ book.lending_time|date:'Y-m-d' }}">Mark Submitted</button>
+                        {% endif %}
+                    </td>
+                    <td>{{ book|calculate_fine }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>    
 </div>
@@ -143,6 +160,53 @@
       </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="submitBookModal" tabindex="-1" role="dialog" aria-labelledby="submitBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="submitBookModalLabel">Submitted on</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="{% url 'update_return_date' %}">
+                {% csrf_token %}
+
+                <input type="hidden" id="bookId" name="book_id">
+                <div class="form-group">
+                    <label for="returnDate">Submitted on</label>
+                    <input type="date" class="form-control" id="returnDate" name="return_date">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        function handleRowClick(event, bookId) {
+            // Check if the click was outside the button
+            if (!event.target.classList.contains('mark-submitted-button')) {
+                window.location.href = '{% url "book_details" '{ bookId }' %}';
+            }
+        }
+        
+        $('#submitBookModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var bookId = button.data('book-id');
+            var modal = $(this);
+            modal.find('#bookId').val(bookId);
+            var lendingTime = button.data('lending-time')
+            var returnDateInput = modal.find('.modal-body #return_date');
+            returnDateInput.attr('min', lendingTime);
+        });
+    });
+</script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" crossorigin="anonymous"></script>

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fine_filters %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/book_details.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2 mt-4">
+            <div class="card">
+                <div class="card">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="{% static 'img/book.png' %}" class="card-img" alt="{{ book.TitleName }}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h2 class="card-title">{{ book.TitleName }}</h2>
+                                <p class="card-text"><strong>Author:</strong> {{ book.AuthorName }}</p>
+                                <p class="card-text"><strong>Accession Number:</strong> {{ book.AccessionNumber }}</p>
+                                <p class="card-text"><strong>Current Status:</strong> {% if book.AllowLend %} In Library {% else %}With Student{% endif %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Borrowing History</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Issue Date</th>
+                                    <th>Expected Return Date</th>
+                                    <th>Actual Return Date</th>
+                                    <th>Fine Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if borrowers %}
+                                    {% for borrower in borrowers %}
+                                        <tr onclick="location.href='{% url 'student_details' borrower.id %}'" style="cursor: pointer;">
+                                            <td>{{ borrower.user.userdata.name }}</td>
+                                            <td>{{ borrower.lending_time|date:"d-m-Y" }}</td>
+                                            <td>{{ borrower.expected_return_date|date:"d-m-Y" }}</td>
+                                            <td>{{ borrower.return_time|default:"Not Returned" }}</td>
+                                            <td>{{ borrower|calculate_fine }}</td>
+                                            <td>
+                                                {% if not borrower.return_time %}
+                                                    <button class="btn btn-secondary" data-toggle="modal" data-target="#submitBookModal" data-book-id="{{ borrower.id }}" data-lending-time="{{ book.lending_time|date:'Y-m-d' }}">Mark Submitted</button>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">No current borrowers.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal for Submitting Return Date -->
+<div class="modal fade" id="submitBookModal" tabindex="-1" role="dialog" aria-labelledby="submitBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="submitBookModalLabel">Mark Book as Submitted</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="submitBookForm" method="post" action="{% url 'update_return_date' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="book_id" id="book_Id">
+                    <div class="form-group">
+                        <label for="return_date">Return Date:</label>
+                        <input type="date" class="form-control" id="return_date" name="return_date" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Set book ID in modal when marking as submitted
+        $('#submitBookModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var bookId = button.data('book-id');
+            var lendingTime = button.data('lending-time')
+            var modal = $(this);
+            modal.find('#book_Id').val(bookId);
+            var returnDateInput = modal.find('.modal-body #return_date');
+            returnDateInput.attr('min', lendingTime);
+        });
+
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+{% endblock %}
