@@ -131,7 +131,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -140,5 +141,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAILJS_USER_ID = 'KNP4f0ozaRaaQsdzD'  # Add your EmailJS user ID here
 EMAILJS_SERVICE_ID = 'service_nnwjrro'  # Add your EmailJS service ID here
 EMAILJS_TEMPLATE_ID = 'template_3b7cmt4'
-
-ALLOWED_HOSTS = ['ec2-54-216-195-206.eu-west-1.compute.amazonaws.com', 'your_domain.com', 'another_domain.com']
